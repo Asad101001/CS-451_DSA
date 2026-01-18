@@ -42,12 +42,5 @@ int main() {
     }
     cout << "]"<<endl;
 
-        // cout << "After:  [";
-        // for (int i = 0; i < arr1.size(); i++) {
-        //     cout << arr1[i];
-        //     if (i < arr1.size() - 1) cout << ", ";
-        // }
-        // cout << "]" << endl << endl;
-
         return 0;
 }
