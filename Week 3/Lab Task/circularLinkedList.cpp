@@ -10,67 +10,110 @@ struct Node {
 Node* list = NULL;
 
 void insert(int value) {
-    Node* temp = new Node();  //only writing Node* temp; -> works in C not C++
-    // temp = (Node *)malloc(sizeof(Node)); //malloc -> allocates memory & sizeof defines size in bits of memory to be allocated : Node
+    Node* temp = new Node();
     temp->data = value;
-    temp->next = list;
 
     if (list == NULL) {
         list = temp;
-    } else {
-        Node* cur = list;
-        while (cur->next != NULL) {
-            cur = cur->next;
-        }
-        cur->next = temp;
+        temp->next = list;
+        return;
     }
+
+    Node* cur = list;
+    while (cur->next != list)
+        cur = cur->next;
+
+    cur->next = temp;
+    temp->next = list;
 }
 
 void display() {
-    Node* cur = list;
-    while (cur != NULL) {
-        cout << cur->data << " -> ";
-        cur = cur->next;
-    }
-    cout << "NULL" << endl;
-}
-
-void deleteElement(int value){
-    if (list==NULL)
-    {
-        cout << "List is empty/NULL";
-    }
-    Node* curr = list;
-    if (value==list->data)
-    {
-        list = list->next;
-        free(curr);
+    if (list == NULL) {
+        cout << "List is empty" << endl;
         return;
     }
-    curr = list->next;
-    Node* prev = list;
 
-    while (curr!=NULL){
-        if (value==curr->data)
-        {
-            prev->next = curr->next;
-            free(curr);
+    Node* cur = list;
+    do {
+        cout << cur->data << " -> ";
+        cur = cur->next;
+    } while (cur != list);
+
+    cout << "(head)" << endl;
+}
+
+void search(int value) {
+    if (list == NULL) {
+        cout << "List is empty" << endl;
+        return;
+    }
+
+    Node* cur = list;
+    int pos = 1;
+
+    do {
+        if (cur->data == value) {
+            cout << "Found at position " << pos << endl;
             return;
         }
-        curr = curr->next;
-        prev = prev->next;
+        cur = cur->next;
+        pos++;
+    } while (cur != list);
+
+    cout << "Not found" << endl;
+}
+
+void deleteElement(int value) {
+    if (list == NULL) {
+        cout << "List is empty" << endl;
+        return;
     }
+
+    Node* curr = list;
+    Node* prev = NULL;
+
+    if (list->data == value && list->next == list) {
+        delete list;
+        list = NULL;
+        return;
+    }
+
+    if (list->data == value) {
+        while (curr->next != list)
+            curr = curr->next;
+
+        Node* temp = list;
+        curr->next = list->next;
+        list = list->next;
+        delete temp;
+        return;
+    }
+
+    prev = list;
+    curr = list->next;
+
+    while (curr != list) {
+        if (curr->data == value) {
+            prev->next = curr->next;
+            delete curr;
+            return;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    cout << "Value not found" << endl;
 }
 
 int main() {
     int choice, val;
 
     while (true) {
-        cout << "\n1- Insert\n2- Display\n3- Delete\n4- Exit\n";
+        cout << "\n1- Insert\n2- Display\n3- Delete\n4- Search\n5- Exit\n";
         cin >> choice;
 
         if (choice == 1) {
-            cout << "Enter value: ";
+            cout << "Enter the number to insert in the list" << endl;
             cin >> val;
             insert(val);
         }
@@ -78,17 +121,20 @@ int main() {
             display();
         }
         else if (choice == 3) {
-            cout << "Enter the value to delete";
+            cout << "Enter the number to delete from the list" << endl;
             cin >> val;
             deleteElement(val);
         }
-        else if (choice == 4){
+        else if (choice == 4) {
+            cout << "Enter the number to search for in the list" << endl;
+            cin >> val;
+            search(val);
+        }
+        else if (choice == 5) {
             break;
         }
         else {
-            cout << "Invalid choice" << endl;
+            cout << "Invalid choice! Try again." << endl;
         }
     }
-
-    return 0;
 }
