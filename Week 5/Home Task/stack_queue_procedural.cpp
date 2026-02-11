@@ -1,277 +1,64 @@
-/*
-================================================================================
-STACK AND QUEUE - PROCEDURAL IMPLEMENTATION WITH TEMPLATES
-University DSA Course - Non-OOP Approach
-================================================================================
-
-WHAT WE'LL LEARN:
-1. Templates - Generic programming without classes
-2. Pointers and nullptr - Memory addresses
-3. Dynamic Memory Allocation - malloc/free in C vs new/delete in C++
-4. Linked Lists - Node-based data structures
-5. Stack - LIFO principle
-6. Queue - FIFO principle
-
-================================================================================
-*/
-
 #include <iostream>
-#include <cstdlib>  // For malloc/free (C-style memory allocation)
+#include <cstdlib>  
 using namespace std;
 
-//==============================================================================
-// PART 1: UNDERSTANDING POINTERS AND MEMORY
-//==============================================================================
-
-/*
-POINTERS - The Foundation of Data Structures
----------------------------------------------
-
-WHAT IS A POINTER?
-A pointer is a variable that stores a MEMORY ADDRESS (location) of another variable.
-
-Think of it like:
-- Your house is at "123 Main Street" (address)
-- A pointer is like writing down that address on paper
-- You can use the address to find your house
-
-SYNTAX:
-    int x = 10;        // Normal variable storing value 10
-    int* ptr = &x;     // Pointer storing ADDRESS of x
-    
-    &x    = "address-of" operator (gives memory address)
-    *ptr  = "dereference" operator (gives value at that address)
-
-Python Comparison:
-    Python hides pointers from you! Everything is a reference.
-    x = [1, 2, 3]
-    y = x          # y points to same list as x (like a pointer)
-    y.append(4)    # modifies the original list
-    print(x)       # [1, 2, 3, 4]
-
-NULLPTR - The Empty Address
-----------------------------
-nullptr means "points to nothing" (like a null address)
-Used to indicate end of linked structures or empty pointers
-
-In C: NULL
-In C++: nullptr (preferred in modern C++)
-In Python: None
-*/
-
-//==============================================================================
-// PART 2: STACK - DETAILED EXPLANATION
-//==============================================================================
-
-/*
-STACK: Last-In-First-Out (LIFO)
---------------------------------
-
-REAL-WORLD ANALOGY:
-Imagine a stack of cafeteria trays:
-- You can only add a tray to the TOP
-- You can only remove a tray from the TOP
-- The LAST tray you put down is the FIRST one you pick up
-
-VISUAL REPRESENTATION:
-
-    push(10)        push(20)        push(30)        pop()
-    
-    |     |         |     |         | 30  | ← top   |     |
-    |     |         | 20  | ← top   | 20  |         | 20  | ← top
-    | 10  | ← top   | 10  |         | 10  |         | 10  |
-    +-----+         +-----+         +-----+         +-----+
-
-WHY USE LINKED LIST FOR STACK?
-1. Dynamic size - grows/shrinks as needed
-2. No wasted space
-3. Push/Pop at one end is O(1) - very fast!
-
-STACK OPERATIONS:
-- push(value)   : Add element to top
-- pop()         : Remove and return top element  
-- peek()/top()  : Look at top element without removing
-- isEmpty()     : Check if stack is empty
-*/
-
-// Node structure for Stack (using template for any data type)
 template <typename T>
 struct StackNode {
     T data;              // The actual value stored
     StackNode<T>* next;  // Pointer to next node (towards bottom of stack)
-    
-    /*
-    MEMORY LAYOUT:
-    
-    StackNode at address 0x1000:
-    +------------------+
-    | data: 42         |  (4-8 bytes depending on type T)
-    | next: 0x2000     |  (8 bytes on 64-bit system)
-    +------------------+
-    
-    The 'next' pointer stores the ADDRESS of the next node
-    */
 };
 
-// Stack structure to hold the top pointer
 template <typename T>
 struct Stack {
     StackNode<T>* top;  // Pointer to the top node
     int size;           // Number of elements in stack
 };
 
-/*
-CREATING A STACK - INITIALIZATION
-----------------------------------
-We need to set up an empty stack
-*/
+
 template <typename T>
 void initStack(Stack<T>* stack) {
     stack->top = nullptr;  // Empty stack - top points to nothing
     stack->size = 0;       // No elements yet
-    
-    /*
-    Python equivalent:
-        def init_stack():
-            return {'top': None, 'size': 0}
-    
-    Or simply:
-        stack = []
-    */
+
 }
 
-/*
-PUSH OPERATION - Adding to Stack
----------------------------------
-Steps:
-1. Create a new node
-2. Put data in the new node
-3. Make new node point to current top
-4. Update top to point to new node
-5. Increment size
-
-TIME COMPLEXITY: O(1) - constant time, no loops!
-*/
 template <typename T>
 void push(Stack<T>* stack, T value) {
-    // Step 1: Allocate memory for new node
-    // new operator: Allocates memory AND calls constructor
+
     StackNode<T>* newNode = new StackNode<T>;
     
-    /*
-    MEMORY ALLOCATION COMPARISON:
-    
-    C-style (malloc):
-        StackNode* newNode = (StackNode*)malloc(sizeof(StackNode));
-        // malloc only allocates raw memory bytes
-        // You must manually initialize fields
-    
-    C++-style (new):
-        StackNode* newNode = new StackNode;
-        // new allocates memory AND initializes the object
-        // Preferred in C++
-    
-    Python:
-        # Python handles memory automatically
-        new_node = {'data': value, 'next': None}
-    */
-    
-    // Step 2: Store data in new node
     newNode->data = value;
     
-    // Step 3: Make new node point to current top
     newNode->next = stack->top;
     
-    // Step 4: Update top to point to new node
     stack->top = newNode;
     
-    // Step 5: Increment size
     stack->size++;
-    
-    /*
-    VISUAL STEP-BY-STEP for push(30):
-    
-    Before:                     Step 3:                    Step 4:
-    top → [20] → [10] → NULL   newNode: [30] → [20]       top → [30] → [20] → [10]
-                               top → [20] → [10] → NULL
-    */
+
 }
 
-/*
-POP OPERATION - Removing from Stack
-------------------------------------
-Steps:
-1. Check if stack is empty (underflow check)
-2. Save the top node's data
-3. Move top pointer to next node
-4. Delete the old top node (free memory!)
-5. Decrement size
-6. Return the saved data
-
-TIME COMPLEXITY: O(1) - constant time
-*/
 template <typename T>
 T pop(Stack<T>* stack) {
-    // Step 1: Check for underflow
+    
     if (stack->top == nullptr) {
         cout << "Error: Stack Underflow - Cannot pop from empty stack!" << endl;
-        exit(1);  // Exit program with error code
+        exit(1);
     }
     
-    // Step 2: Save the data we want to return
     T value = stack->top->data;
     
-    // Step 3: Save pointer to node we're about to delete
     StackNode<T>* temp = stack->top;
     
-    // Step 4: Move top to next node
     stack->top = stack->top->next;
     
-    // Step 5: Free the memory of old top node
     delete temp;
     
-    /*
-    MEMORY DEALLOCATION:
-    
-    C++-style (delete):
-        delete temp;  // Calls destructor AND frees memory
-    
-    C-style (free):
-        free(temp);   // Only frees memory, no destructor
-    
-    Python:
-        # Automatic garbage collection
-        # No need to manually free memory
-        value = stack[-1]
-        stack.pop()
-    
-    WHY IS THIS IMPORTANT?
-    - Without delete/free, you have a MEMORY LEAK
-    - The memory is still allocated but unreachable
-    - Over time, your program runs out of memory!
-    */
-    
-    // Step 6: Decrement size
     stack->size--;
     
     return value;
     
-    /*
-    VISUAL STEP-BY-STEP for pop():
-    
-    Before:                      Step 4:                   After delete:
-    top → [30] → [20] → [10]    temp → [30]               top → [20] → [10]
-                                top → [20] → [10]          [30] is freed
-    */
 }
 
-/*
-PEEK/TOP OPERATION - Look Without Removing
--------------------------------------------
-Just return the top value without modifying the stack
-
-TIME COMPLEXITY: O(1)
-*/
 template <typename T>
 T peek(Stack<T>* stack) {
     if (stack->top == nullptr) {
@@ -281,49 +68,18 @@ T peek(Stack<T>* stack) {
     
     return stack->top->data;
     
-    /*
-    Python equivalent:
-        if not stack:
-            raise IndexError("Stack is empty")
-        return stack[-1]
-    */
 }
 
-/*
-IS EMPTY CHECK
---------------
-Returns true if stack has no elements
-
-TIME COMPLEXITY: O(1)
-*/
 template <typename T>
 bool isEmpty(Stack<T>* stack) {
     return stack->top == nullptr;
-    
-    // Alternative: return stack->size == 0;
-    
-    /*
-    Python: return len(stack) == 0
-    */
 }
 
-/*
-GET SIZE
---------
-Returns number of elements
-
-TIME COMPLEXITY: O(1) because we maintain a size counter
-*/
 template <typename T>
 int getSize(Stack<T>* stack) {
     return stack->size;
 }
 
-/*
-DISPLAY STACK - For Debugging
-------------------------------
-Print all elements from top to bottom
-*/
 template <typename T>
 void displayStack(Stack<T>* stack) {
     if (isEmpty(stack)) {
