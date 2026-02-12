@@ -156,97 +156,35 @@ struct Queue {
     QueueNode<T>* front;  // Points to first element (for dequeue)
     QueueNode<T>* rear;   // Points to last element (for enqueue)
     int size;
-    
-    /*
-    WHY TWO POINTERS?
-    
-    With only front pointer:
-        enqueue would be O(n) - need to traverse to end
-        dequeue would be O(1)
-    
-    With both front and rear:
-        enqueue is O(1) - direct access to rear
-        dequeue is O(1) - direct access to front
-    */
 };
 
-/*
-CREATING A QUEUE - INITIALIZATION
-----------------------------------
-*/
 template <typename T>
 void initQueue(Queue<T>* queue) {
     queue->front = nullptr;  // Empty queue
     queue->rear = nullptr;   // Empty queue
     queue->size = 0;
     
-    /*
-    Python equivalent:
-        from collections import deque
-        queue = deque()
-    
-    Or using list (but inefficient):
-        queue = []
-    */
 }
-
-/*
-ENQUEUE OPERATION - Adding to Queue
-------------------------------------
-Steps:
-1. Create new node with data
-2. If queue is empty, both front and rear point to new node
-3. If queue has elements, link rear to new node and update rear
-4. Increment size
-
-TIME COMPLEXITY: O(1)
-*/
 template <typename T>
 void enqueue(Queue<T>* queue, T value) {
-    // Step 1: Create new node
+    
     QueueNode<T>* newNode = new QueueNode<T>;
     newNode->data = value;
     newNode->next = nullptr;  // New node will be at the end
     
-    // Step 2: Check if queue is empty
+
     if (queue->rear == nullptr) {
         // First element - both front and rear point to it
         queue->front = newNode;
         queue->rear = newNode;
         
-        /*
-        VISUAL:
-        front → [10] ← rear
-                 ↓
-               NULL
-        */
     }
     else {
-        // Step 3: Add to rear
+       
         queue->rear->next = newNode;  // Link current rear to new node
         queue->rear = newNode;         // Update rear to new node
-        
-        /*
-        VISUAL STEP-BY-STEP for enqueue(30):
-        
-        Before:
-        front → [10] → [20] ← rear
-                        ↓
-                      NULL
-        
-        After rear->next = newNode:
-        front → [10] → [20] → [30] ← newNode
-                 ↑            ↑
-               rear          NULL
-        
-        After rear = newNode:
-        front → [10] → [20] → [30] ← rear
-                               ↓
-                             NULL
-        */
     }
     
-    // Step 4: Increment size
     queue->size++;
 }
 
@@ -592,10 +530,6 @@ void balancedParenthesesDemo() {
     destroyStack(&stack1);
 }
 
-//==============================================================================
-// MAIN FUNCTION
-//==============================================================================
-
 int main() {
     cout << "================================================" << endl;
     cout << "  STACK & QUEUE - Procedural Implementation" << endl;
@@ -613,46 +547,3 @@ int main() {
     
     return 0;
 }
-
-/*
-================================================================================
-KEY CONCEPTS SUMMARY
-================================================================================
-
-1. POINTERS:
-   - Store memory addresses
-   - & operator: get address
-   - * operator: dereference (get value at address)
-   - nullptr: points to nothing
-
-2. DYNAMIC MEMORY:
-   C++:  new/delete
-   C:    malloc/free
-   Python: automatic garbage collection
-
-3. TEMPLATES:
-   - Write code once, use for any type
-   - template <typename T>
-   - Compiler generates type-specific code
-
-4. STACK (LIFO):
-   - push: O(1)
-   - pop: O(1)
-   - peek: O(1)
-   - One pointer: top
-
-5. QUEUE (FIFO):
-   - enqueue: O(1)
-   - dequeue: O(1)
-   - Two pointers: front and rear
-
-6. MEMORY LEAKS:
-   - Always delete/free what you new/malloc
-   - Use destroy functions before program ends
-
-================================================================================
-COMPILATION:
-    g++ -std=c++11 stack_queue_procedural.cpp -o stack_queue
-    ./stack_queue
-================================================================================
-*/
