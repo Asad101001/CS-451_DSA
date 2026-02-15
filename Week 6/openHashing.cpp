@@ -7,7 +7,6 @@ struct Node{
 };
 
 Node hashTable[10];
-// int 10 = 10;
 
 void insert (int value){
     int ind = value % 10;
@@ -31,7 +30,6 @@ void insert (int value){
     }
 }
 
-
 void display(){
     for (int i = 0; i < 10; i++){
         if (hashTable[i].data==-1){
@@ -52,6 +50,28 @@ void display(){
     }
 }    
 
+bool search(int value){
+    int ind = value % 10;
+
+    if(hashTable[ind].data == -1){
+        return false;
+    }
+
+    if(hashTable[ind].data == value){
+        return true;
+    }
+
+    Node* curr = hashTable[ind].next;
+    while(curr != NULL){
+        if(curr->data == value){
+            return true;
+        }
+        curr = curr->next;
+    }
+
+    return false;
+}
+
 int main(){
     for (int i = 0; i < 10; i++){
         hashTable[i].data = -1;
@@ -63,5 +83,6 @@ int main(){
     insert(71);
     insert(61);
     insert(22);
+    cout << search(90);
     display();
 }
